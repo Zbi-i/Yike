@@ -2,9 +2,17 @@ const router = require('koa-router')
 const { verifyLogin, verifyPermission } = require('../middleware/auth.middleware')
 const { create, detail, list, updated, remove, addLable, pictureInfo } = require('../controller/moment.controller')
 const momentRouter = new router({prefix: '/moment'})
+const {
+    pictureHandler,
+    momentPictureHandle,
+    imageResize
+} = require('../middleware/file.middleware')
+const {
+    savaPictureInfo
+} = require('../controller/file.controller')
 
 // 发表动态
-momentRouter.post('/', verifyLogin, create)
+momentRouter.post('/', verifyLogin, pictureHandler, create, imageResize, savaPictureInfo)
 // 获取一组动态
 momentRouter.get('/list', list)
 // 获取某一条动态

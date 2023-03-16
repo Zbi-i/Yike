@@ -6,7 +6,6 @@ class momentService {
     async create (userId, content) {
         const statement = `INSERT INTO moment(user_id, content) VALUES(?, ?)`;
         const result = await connection.execute(statement,[userId, content]);
-
         return result[0];
     }
     // 获取某一条动态详情
@@ -17,7 +16,7 @@ class momentService {
                 JSON_OBJECT(
                         'id', u.id,
                         'name', u.username,
-                        'avatar',(SELECT JSON_OBJECT('name', a.name, 'mimetype', a.mimetype) FROM avatar a WHERE a.user_id = u.id)
+                        'avatar',(SELECT JSON_OBJECT('name', a.name, 'mimetype', a.mimetype) FROM avatar a WHERE a.user_id = u.id AND a.id = u.avatar_id)
                 ) user,
                 (SELECT COUNT(c.id) FROM comment c WHERE c.moment_id = m.id) commentCount,
                 (SELECT JSON_ARRAYAGG(l.lable_name)
@@ -51,7 +50,7 @@ class momentService {
                 m.id id, m.content content,
                 JSON_OBJECT(
                     'id', u.id, 'name', u.username,
-                    'avatar', (SELECT JSON_OBJECT('name', a.name, 'mimetype', a.mimetype) FROM avatar a WHERE a.user_id = u.id)
+                    'avatar', (SELECT JSON_OBJECT('name', a.name, 'mimetype', a.mimetype) FROM avatar a WHERE a.user_id = u.id AND a.id = u.avatar_id)
                 ) user,
                 (SELECT 
                     JSON_ARRAYAGG(

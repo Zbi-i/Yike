@@ -6,9 +6,21 @@ const fs = require('fs')
 class momentController {
     // 发表心情
     async create(ctx, next){
-        const { userId, content } = ctx.request.body
-        const result = service.create(userId,content)
-        ctx.body = "心情发表成功~"
+        try {
+            const { id } = ctx.user;
+            const files = ctx.req.files;
+            const { content } = ctx.req.body
+            const result = await service.create(id, content);
+            ctx.momentId = result.insertId
+            if (JSON.stringify(files) !== '[]'){
+                await next()
+            }else {
+                ctx.body = "动态发表成功~"
+            }
+        } catch (error) {
+            console.log(error)
+        }
+
     }
     // 获取某一条动态
     async detail(ctx, next){
@@ -34,7 +46,14 @@ class momentController {
     // 删除动态
     async remove(ctx, next){
         const { momentId } = ctx.params;
+        const { id } = ctx.user;
+
+        const [pictureInfo] = await fileService.getPictureByMomentId(momentId);
+        const { name } = pictureInfo;  
+        const filePath = path.resolve(__dirname, '../../upload/picture/', JSON.stringify(id))
+        
         const result = await service.remove(momentId);
+        deletePictureFiles(filePath, name);
         ctx.body = result
     }
     // 给动态添加标签
@@ -50,6 +69,22 @@ class momentController {
         const [pictureInfo] = await fileService.getPictureByMomentId(momentId, fileName)
         ctx.response.set('content-type', pictureInfo.mimetype)
         ctx.body = fs.createReadStream(path.resolve(PICTURE_PATH,userId,pictureInfo.name)) 
+    }
+}
+
+// 删除本地文件
+const deletePictureFiles = (filePath, filename) =>  {
+    const fileList = ['-master', '-small', '-middle'];
+    const nameText = filename.split('-')[0];
+    const fileType = filename.split('-')[1].split('.')[1];
+
+    for (let i in fileList){
+        const newName = nameText + fileList[i] + '.' + fileType;
+        const newPath = path.resolve(filePath, newName)
+        if(fs.existsSync(newPath)){
+            fs.unlinkSync(newPath)
+            console.log(newName + "文件已删除！")
+        }
     }
 }
 

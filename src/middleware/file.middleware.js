@@ -4,6 +4,7 @@ const Jimp = require('jimp')
 const path = require('path')
 const fs = require('fs')
 
+const authService = require('../service/auth.service')
 
 const { AVATAR_PATH, PICTURE_PATH } = require('../constants/file.path')
 
@@ -52,9 +53,9 @@ const imageResize = async (ctx, next) => {
     files.forEach(file => {
       const suffix = file.mimetype.split('/')[1]
       Jimp.read(file.path).then(image => {
-        image.resize(1280, Jimp.AUTO).write(`${file.path}-large.${suffix}`)
-        image.resize(640, Jimp.AUTO).write(`${file.path}-middle.${suffix}`)
-        image.resize(320, Jimp.AUTO).write(`${file.path}-small.${suffix}`)
+        // image.resize(1280, Jimp.AUTO).write(`${file.path}-large.${suffix}`)
+        image.resize(640, Jimp.AUTO).quality(60).write(`${file.path}-middle.${suffix}`)
+        image.resize(320, Jimp.AUTO).quality(40).write(`${file.path}-small.${suffix}`)
       })
     })
   } catch (error) {
