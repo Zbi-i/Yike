@@ -7,8 +7,7 @@ const { PUBLICK_KEY } = require('../app/config')
 
 // 验证用户登录
 const verifyAuth = async (ctx, next) => {
-    const { username, password } = ctx.request.body; 
-    
+    const { username, password } = ctx.request.body || {}; 
     // 判断用户名和密码是否为空
     if(!username || !password){
         const error = new Error(errorType.USERNAME_OR_PASSWORD_IS_NOT_NULL);
@@ -21,12 +20,13 @@ const verifyAuth = async (ctx, next) => {
     const user = result[0];
 
     // 判断用户是否存在 如果不存在 result.password == undefined
-    if (user.username === undefined) {
+    if (user?.username === undefined) {
         const error = new Error(errorType.THE_USER_DOES_NOT_EXIST);
         return ctx.app.emit('error', error, ctx);
     }
+
     // 判断密码是否正确
-    if(md5password !== user.password){
+    if(md5password !== user?.password){
         const error = new Error(errorType.THE_USER_NAME_OR_PASSWORD_IS_INCORRECT);
         return ctx.app.emit('error', error, ctx);
     }
@@ -72,6 +72,7 @@ const verifyPermission = async (ctx, next) => {
     }
     
 }
+
 module.exports = {
     verifyAuth,
     verifyLogin,

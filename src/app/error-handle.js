@@ -38,7 +38,7 @@ const errorHandle = (error, ctx) => {
     }
 
     ctx.status = status;
-    ctx.response.body = message
+    ctx.body = message
 }
 
 module.exports = errorHandle

@@ -9,8 +9,6 @@ class  userController {
         // 获取用户信息
         const user = ctx.request.body;
 
-        console.log(user)
-
         // 创建用户
         const result = await userService.create(user);
         console.log(result+ 666)
@@ -18,6 +16,7 @@ class  userController {
         // 返回数据
         ctx.body = `用户${user.username}注册成功~！`
     }
+    // 获取用户头像信息
     async avatarInfo(ctx, next) {
         const { userId } = ctx.params;
         const [avatarInfo] = await fileService.getAvatarByUserId(userId)
