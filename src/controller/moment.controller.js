@@ -9,6 +9,7 @@ class momentController {
         try {
             const { id } = ctx.user;
             const files = ctx.req.files;
+            console.log(files)
             const { content } = ctx.req.body
             const result = await service.create(id, content);
             ctx.momentId = result.insertId

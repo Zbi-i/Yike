@@ -31,6 +31,10 @@ const errorHandle = (error, ctx) => {
             status = 401;
             message = "您没有权限执行该操作~"
         break;
+        case errorType.LOGINERROR:
+            status = 401;
+            message = "请重新登录！"
+            break;
         default:
             status = 400;
             message = 'NOT FOUNT~'

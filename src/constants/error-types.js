@@ -12,6 +12,8 @@ const THE_USER_DOES_NOT_EXIST = "the_user_dose_not_exist";
 const UNAUTHORIZATION = 'un_authorization';
 // 没有权限
 const UNPERMISSION = 'un_permission'
+// userId为空 登录错误
+const LOGINERROR = 'login_error'
 
 module.exports = {
     USERNAME_OR_PASSWORD_IS_NOT_NULL,
@@ -20,5 +22,6 @@ module.exports = {
     THE_USER_NAME_OR_PASSWORD_IS_INCORRECT,
     THE_USER_DOES_NOT_EXIST,
     UNAUTHORIZATION,
-    UNPERMISSION
+    UNPERMISSION,
+    LOGINERROR
 }

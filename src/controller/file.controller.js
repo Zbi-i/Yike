@@ -31,8 +31,8 @@ class fileController{
                     if (err) console.log(err)
                 })
                 const result = await fileService.uploadPictrue(newFileName, mimetype, size, id, momentId)
-                ctx.body = result
             });
+            ctx.body = "动态发表成功~"
         } catch (error) {
             console.log(error)
         }   

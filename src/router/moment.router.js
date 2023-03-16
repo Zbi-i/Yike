@@ -4,8 +4,7 @@ const { create, detail, list, updated, remove, addLable, pictureInfo } = require
 const momentRouter = new router({prefix: '/moment'})
 const {
     pictureHandler,
-    momentPictureHandle,
-    imageResize
+    imageResize,
 } = require('../middleware/file.middleware')
 const {
     savaPictureInfo
