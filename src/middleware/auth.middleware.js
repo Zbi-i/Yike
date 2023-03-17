@@ -52,16 +52,14 @@ const verifyLogin = async (ctx, next) => {
     }
     const token = authorization.replace('Bearer ', '');
     try {
-        if (getUserId() == 0) {
-            const error = new Error(errorType.LOGINERROR)
-            return ctx.app.emit('error', error, ctx)
-        }
         const result = jwt.verify(token, PUBLICK_KEY, {
             algorithms: 'RS256'
         })
         ctx.user = result;
+        userId = result.id;
         await next()
     } catch (err) {
+        console.log("抛出异常")
         const error = new Error(errorType.UNAUTHORIZATION)
         return ctx.app.emit('error', error, ctx)
     }

@@ -16,7 +16,7 @@ class momentService {
                 JSON_OBJECT(
                         'id', u.id,
                         'name', u.username,
-                        'avatar',(SELECT JSON_OBJECT('name', a.name, 'mimetype', a.mimetype) FROM avatar a WHERE a.user_id = u.id AND a.id = u.avatar_id)
+                        'avatar',(SELECT JSON_OBJECT('name', a.avatar_path, 'mimetype', a.mimetype) FROM avatar a WHERE a.user_id = u.id AND a.id = u.avatar_id)
                 ) user,
                 (SELECT COUNT(c.id) FROM comment c WHERE c.moment_id = m.id) commentCount,
                 (SELECT JSON_ARRAYAGG(l.lable_name)
@@ -28,13 +28,18 @@ class momentService {
                     JSON_OBJECT(
                             'id', c.id, 'content', c.content, 'commentId', c.comment_id, 'createTime', c.createAt,
                             'user', JSON_OBJECT(
-                                'id', cu.id, 'name', cu.username,
-                                'avatar',(SELECT JSON_OBJECT('name', a.name, 'mimetype', a.mimetype) FROM avatar a WHERE a.user_id = u.id)
+                                'id', cu.id, 'avatarPath', cu.username,
+                                'avatar',(SELECT JSON_OBJECT('avatarPath', a.avatar_path, 'mimetype', a.mimetype) FROM avatar a WHERE a.user_id = u.id)
                             )
                     )),NULL) FROM comment c 
                     LEFT JOIN users cu ON c.user_id = cu.id
                     WHERE m.id = c.moment_id
-                ) comments
+                ) comments,
+                (SELECT 
+                    JSON_ARRAYAGG(
+                        JSON_OBJECT('picturePath', p.picture_path, 'mimetype', p.mimetype)
+                    ) FROM picture p WHERE p.user_id = u.id AND p.moment_id = m.id
+                ) 'picture'
             FROM moment m
             LEFT JOIN users u ON m.user_id = u.id
             WHERE m.id = ?
@@ -50,11 +55,11 @@ class momentService {
                 m.id id, m.content content,
                 JSON_OBJECT(
                     'id', u.id, 'name', u.username,
-                    'avatar', (SELECT JSON_OBJECT('name', a.name, 'mimetype', a.mimetype) FROM avatar a WHERE a.user_id = u.id AND a.id = u.avatar_id)
+                    'avatar', (SELECT JSON_OBJECT('avatarPath', a.avatar_path, 'mimetype', a.mimetype) FROM avatar a WHERE a.user_id = u.id AND a.id = u.avatar_id)
                 ) user,
                 (SELECT 
                     JSON_ARRAYAGG(
-                        JSON_OBJECT('name', p.name, 'mimetype', p.mimetype)
+                        JSON_OBJECT('picturePath', p.picture_path, 'mimetype', p.mimetype)
                     ) FROM picture p WHERE p.user_id = u.id AND p.moment_id = m.id
                 ) 'picture',
                 (SELECT JSON_ARRAYAGG(l.lable_name)
