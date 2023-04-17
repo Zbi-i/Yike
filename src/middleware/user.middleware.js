@@ -1,7 +1,7 @@
 const { getUserByName } = require('../service/user.service')
 const errorType = require('../constants/error-types')
 const verifyUser = async (ctx, next) => {
-    const { username, password } = ctx.request.body;
+    const { username, password, account } = ctx.request.body;
     // 判断用户名或者密码是否为空
     if( !username || !password) {
         console.log("用户名或密码不能为空!")
@@ -9,9 +9,16 @@ const verifyUser = async (ctx, next) => {
         return ctx.app.emit('error', error, ctx)
     }
     // 判断用户名是否已被注册
-    const result = await getUserByName(username)
-    if (result.length) {
+    const resultName = await getUserByName('username', username)
+    if (resultName.length) {
         console.log("用户名已存在!")
+        const error = new Error(errorType.THE_USERNAME_IS_ALREADLY_IN_USE)
+        return ctx.app.emit('error', error, ctx)
+    }
+    // 判断用户名是否已被注册
+    const resultAccount = await getUserByName('account', account)
+    if (resultAccount.length) {
+        console.log("该账号已注册!")
         const error = new Error(errorType.THE_USERNAME_IS_ALREADLY_IN_USE)
         return ctx.app.emit('error', error, ctx)
     }

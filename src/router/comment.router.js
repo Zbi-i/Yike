@@ -12,7 +12,7 @@ commentRouter.post('/:momentId', verifyLogin, create)
 // 删除评论
 commentRouter.delete('/:commentId', verifyLogin, verifyPermission, remove)
 // 回复评论
-commentRouter.post('/:commentId/reply', verifyLogin, verifyPermission, reply)
+commentRouter.post('/:momentId/reply', verifyLogin, verifyPermission, reply)
 
 
 module.exports = commentRouter

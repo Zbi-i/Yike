@@ -20,7 +20,7 @@ const verifyAuth = async (ctx, next) => {
 
         // 对用户密码进行MD5加密 再从数据库获取加密的密码
         const md5password = passwordHandle(password);
-        const result = await getUserByName(username);
+        const result = await getUserByName('username', username);
         const user = result[0];
 
         // 判断用户是否存在 如果不存在 result.password == undefined
@@ -59,6 +59,7 @@ const verifyLogin = async (ctx, next) => {
         userId = result.id;
         await next()
     } catch (err) {
+        console.log(err)
         console.log("抛出异常")
         const error = new Error(errorType.UNAUTHORIZATION)
         return ctx.app.emit('error', error, ctx)

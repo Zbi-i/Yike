@@ -17,7 +17,7 @@ momentRouter.get('/list', list)
 // 获取某一条动态
 momentRouter.get('/:momentId', detail)
 // 获取某条动态配图
-momentRouter.get('/:userId/:momentId/:fileName', pictureInfo)
+momentRouter.get('/picture/:userId/:momentId/:filename', pictureInfo)
 
 // 1.判断用户是否登录 2.判断是否具备权限（用户只可以修改删除自己发布的内容）
 // 修改某一条动态

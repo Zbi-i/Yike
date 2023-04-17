@@ -8,6 +8,8 @@ class lableService  {
             const statement = `INSERT INTO lable(lable_name) VALUES(?)`
             const [result] = await connection.execute(statement, [name])
             return result
+        } else {
+            return result
         }
     }
     async getLableByName (name){

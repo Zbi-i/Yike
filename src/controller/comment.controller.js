@@ -21,10 +21,10 @@ class commentController{
 
     async reply(ctx, next){
         try {
-            const { commentId } = ctx.params;
+            const { momentId } = ctx.params;
             const { id } = ctx.user;
-            const { content, momentId } = ctx.request.body;
-
+            const { content, commentId } = ctx.request.body;
+            console.log(momentId, content, commentId);
             const result = await commentService.reply(id, momentId, commentId, content)
             ctx.body = result
         } catch (error) {

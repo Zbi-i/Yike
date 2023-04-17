@@ -22,9 +22,10 @@ class fileService{
         const [result] = await connection.execute(statement, [filepath, mimetype, size, userId, momentId])
         return result;
     }
-    async getPictureByMomentId(momentId) {
-        const statement = `SELECT * FROM picture WHERE moment_id = ?`
-        const [result] = await connection.execute(statement, [momentId])
+    async getPictureByMomentId(momentId, filename) {
+        // 后续通过 momentId 判断动态是否是私密的 如果是 返回错误
+        const statement = `SELECT * FROM picture WHERE moment_id = ? AND picture_path = ?`
+        const [result] = await connection.execute(statement, [momentId, filename])
         return result;
     }
 }

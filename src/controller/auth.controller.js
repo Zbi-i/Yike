@@ -3,16 +3,18 @@ const { PRIVATE_KEY } = require('../app/config')
 class authController {
     async login (ctx, next) {
         // 获取用户的信息
-        const { id, username } = ctx.user;
+        const { id, username, avatar } = ctx.user;
         // 生成token
         const token = jwt.sign({id, username}, PRIVATE_KEY ,{
-            expiresIn: 60 * 60 * 24,
+            expiresIn: 60 * 60 * 24 * 7,
             algorithm: 'RS256'
         })
         // 返回数据
         ctx.body = {
-            "id": id,
-            "username": username,
+            'user': {
+                "id": id,
+                "username": username,
+            },
             "token": token
         };
     }

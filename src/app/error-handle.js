@@ -11,6 +11,10 @@ const errorHandle = (error, ctx) => {
             status = 409; // 冲突
             message = "用户名已被使用~"
         break;
+        case errorType.THE_ACCOUNT_IS_ALREADLY_IN_USE:
+            status = 409; // 冲突
+            message = "该邮箱已被注册~"
+        break;
         case errorType.THE_PASSWORD_CONTAINS_LESS_THAN_SIX_CHARACTERS:
             status = 412;
             message = "密码长度小6位！"

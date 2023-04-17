@@ -7,7 +7,11 @@ const bodyParser = require('koa-bodyparser')
 const errorHandle = require('./error-handle')
 
 app.use(async (ctx, next)=> {
-    ctx.set('Access-Control-Allow-Origin', 'http://localhost:8001');
+    ctx.set('Access-Control-Allow-Origin', '*');
+    ctx.set("Access-Control-Allow-Credentials", "true");
+    // 允许的访问方法
+    ctx.set("Access-Control-Allow-Methods","POST, GET, PUT, OPTIONS, DELETE, PATCH");
+    
     return next()
  });
 

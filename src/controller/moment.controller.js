@@ -9,8 +9,9 @@ class momentController {
         try {
             const { id } = ctx.user;
             const files = ctx.req.files;
-            console.log(files)
-            const { content } = ctx.req.body
+            console.log("files", files)
+            const content = ctx.req.body?.content || '' ;
+            console.log(content)
             const result = await service.create(id, content);
             ctx.momentId = result.insertId
             if (JSON.stringify(files) !== '[]'){
@@ -21,7 +22,6 @@ class momentController {
         } catch (error) {
             console.log(error)
         }
-
     }
     // 获取某一条动态
     async detail(ctx, next){
@@ -66,10 +66,13 @@ class momentController {
     }
     // 获取某条动态配图
     async pictureInfo (ctx, next){
-        const { userId, fileName, momentId } = ctx.params;
-        const [pictureInfo] = await fileService.getPictureByMomentId(momentId, fileName)
+        const { userId, momentId, filename } = ctx.params;
+        console.log(userId, momentId, filename)
+        const [pictureInfo] = await fileService.getPictureByMomentId(momentId, filename)
+        console.log(pictureInfo)
         ctx.response.set('content-type', pictureInfo.mimetype)
-        ctx.body = fs.createReadStream(path.resolve(PICTURE_PATH,userId,pictureInfo.name)) 
+        console.log(path.resolve(PICTURE_PATH,userId,pictureInfo.picture_path))
+        ctx.body = fs.createReadStream(path.resolve(PICTURE_PATH,userId,pictureInfo.picture_path)) 
     }
 }
 

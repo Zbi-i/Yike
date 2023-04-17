@@ -5,7 +5,7 @@ class commentService {
     async create(userId, momentId, content) {
         const statement = `INSERT INTO  comment(user_id, moment_id, content) VALUES(?, ?, ?)`;
         const result = await connection.execute(statement,[userId, momentId, content]);
-        return result;
+        return result[0];
     }
     // 删除评论
     async remove(commentId){
@@ -19,7 +19,7 @@ class commentService {
         try {
             const statement = `INSERT INTO  comment(user_id, moment_id, comment_id, content) VALUES(?, ?, ?, ?)`;
             const result = await connection.execute(statement,[userId, momentId, commentId, content]);
-            return result;
+            return result[0];
         } catch (error) {
             console.log(error)
         }

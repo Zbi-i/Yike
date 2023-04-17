@@ -1,3 +1,4 @@
+const path = require('path');
 const fileService = require('../service/file.service');
 const fs = require('fs');
 class fileController{
@@ -24,11 +25,11 @@ class fileController{
                 const { filename, mimetype, size, path } = file;
                 // 给上传的图片文件添加后缀名
                 const suffix = '-master' + '.' + mimetype.split('/')[1];
-                const newPaht = path + suffix;
-                fs.rename(path, newPaht, err => {
+                const newFile = filename + suffix;
+                fs.rename(path, path + suffix, err => {
                     if (err) console.log(err)
                 })
-                const result = await fileService.uploadPictrue(newPaht, mimetype, size, id, momentId)
+                const result = await fileService.uploadPictrue(newFile, mimetype, size, id, momentId)
             });
             ctx.body = "动态发表成功~"
         } catch (error) {
