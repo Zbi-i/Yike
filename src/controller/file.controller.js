@@ -21,17 +21,19 @@ class fileController{
             const files = ctx.req.files;
             const { id } = ctx.user;
             const momentId = ctx.momentId;
-            files.forEach(async file => {
+            files?.forEach(async file => {
                 const { filename, mimetype, size, path } = file;
                 // 给上传的图片文件添加后缀名
-                const suffix = '-master' + '.' + mimetype.split('/')[1];
-                const newFile = filename + suffix;
+                const newFile = filename + mimetype.split('/')[1];
                 fs.rename(path, path + suffix, err => {
                     if (err) console.log(err)
                 })
                 const result = await fileService.uploadPictrue(newFile, mimetype, size, id, momentId)
             });
-            ctx.body = "动态发表成功~"
+            ctx.body = { 
+                data: "动态发表成功~",
+                momentId
+            }
         } catch (error) {
             console.log(error)
         }   

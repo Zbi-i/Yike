@@ -46,8 +46,9 @@ const pictureHandler = pictureUpload.array('picture', 9)
 
 const imageResize = async (ctx, next) => {
   try {
-    const files = ctx.req.files || [ctx.req.file];
-    files.forEach(file => {
+    const files = ctx.req?.files;
+    files?.forEach(file => {
+      if (!file) return;
       const suffix = file.mimetype.split('/')[1]
       Jimp.read(file.path).then(image => {
         // image.resize(1280, Jimp.AUTO).write(`${file.path}-large.${suffix}`)

@@ -4,7 +4,6 @@ const lableService = require('../service/lable.service')
 class momentService {
     // 发表动态
     async create (userId, content) {
-        console.log('content', content)
         const statement = `INSERT INTO moment(user_id, content) VALUES(?, ?)`;
         const result = await connection.execute(statement,[userId, content]);
         return result[0];

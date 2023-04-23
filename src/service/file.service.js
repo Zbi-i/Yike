@@ -8,7 +8,6 @@ class fileService{
         // 把当前的图片设为用户头像
         const updatedStatement = `UPDATE users SET avatar_id = ? WHERE id = ?`
         const avatarId = savaResult.insertId;
-        console.log(avatarId)
         const updateRuslt = await connection.execute(updatedStatement, [avatarId, userId]);
         return updateRuslt;
     }
@@ -22,10 +21,10 @@ class fileService{
         const [result] = await connection.execute(statement, [filepath, mimetype, size, userId, momentId])
         return result;
     }
-    async getPictureByMomentId(momentId, filename) {
+    async getPictureByMomentId(filename) {
         // 后续通过 momentId 判断动态是否是私密的 如果是 返回错误
-        const statement = `SELECT * FROM picture WHERE moment_id = ? AND picture_path = ?`
-        const [result] = await connection.execute(statement, [momentId, filename])
+        const statement = `SELECT * FROM picture WHERE picture_path = ?`
+        const [result] = await connection.execute(statement, [filename])
         return result;
     }
 }

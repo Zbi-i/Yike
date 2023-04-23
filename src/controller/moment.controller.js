@@ -9,15 +9,16 @@ class momentController {
         try {
             const { id } = ctx.user;
             const files = ctx.req.files;
-            console.log("files", files)
-            const content = ctx.req.body?.content || '' ;
-            console.log(content)
+            const content = ctx.req.body?.content || '';
             const result = await service.create(id, content);
             ctx.momentId = result.insertId
-            if (JSON.stringify(files) !== '[]'){
+            if (files && JSON.stringify(files) !== '[]'){
                 await next()
             }else {
-                ctx.body = "动态发表成功~"
+                ctx.body = { 
+                    data: "动态发表成功~",
+                    momentId: ctx.momentId
+                }
             }
         } catch (error) {
             console.log(error)
@@ -66,13 +67,20 @@ class momentController {
     }
     // 获取某条动态配图
     async pictureInfo (ctx, next){
-        const { userId, momentId, filename } = ctx.params;
-        console.log(userId, momentId, filename)
-        const [pictureInfo] = await fileService.getPictureByMomentId(momentId, filename)
-        console.log(pictureInfo)
-        ctx.response.set('content-type', pictureInfo.mimetype)
-        console.log(path.resolve(PICTURE_PATH,userId,pictureInfo.picture_path))
-        ctx.body = fs.createReadStream(path.resolve(PICTURE_PATH,userId,pictureInfo.picture_path)) 
+        try {
+            const { pictureSize, filename } = ctx.params;
+            const newFilename = `${filename.split('.')[0]}-${pictureSize}.${filename.split('.')[1]}`;
+            const [pictureInfo] = await fileService.getPictureByMomentId(filename)
+            if (!pictureInfo) {
+                console.log(pictureInfo)
+                const error = new Error('图片不存在')
+                return ctx.app.emit('error', error, ctx)
+            }
+            ctx.response.set('content-type', pictureInfo.mimetype)
+            ctx.body = fs.createReadStream(path.resolve(PICTURE_PATH, pictureInfo.user_id.toString(), newFilename))    
+        } catch (error) {
+            console.log(error)
+        }
     }
 }
 

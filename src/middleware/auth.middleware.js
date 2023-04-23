@@ -60,7 +60,6 @@ const verifyLogin = async (ctx, next) => {
         await next()
     } catch (err) {
         console.log(err)
-        console.log("抛出异常")
         const error = new Error(errorType.UNAUTHORIZATION)
         return ctx.app.emit('error', error, ctx)
     }
