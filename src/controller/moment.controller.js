@@ -8,18 +8,12 @@ class momentController {
     async create(ctx, next){
         try {
             const { id } = ctx.user;
-            const files = ctx.req.files;
-            const content = ctx.req.body?.content || '';
+            const { content = '' } = ctx.req.body;
+            console.log('content', content)
             const result = await service.create(id, content);
             ctx.momentId = result.insertId
-            if (files && JSON.stringify(files) !== '[]'){
-                await next()
-            }else {
-                ctx.body = { 
-                    data: "动态发表成功~",
-                    momentId: ctx.momentId
-                }
-            }
+            // 添加标签
+            next()
         } catch (error) {
             console.log(error)
         }
@@ -34,6 +28,30 @@ class momentController {
     async list(ctx, next){
         const { offset, size } = ctx.query   
         const [result] = await service.list(offset, size)
+        ctx.body = result;
+    }
+    async userList(ctx, next){
+        const { userId } = ctx.params;
+        const { offset, size } = ctx.query;
+        const [result] = await service.userListOfClassify(userId, offset, size);
+        ctx.body = result;
+    }
+    async userLikeList(ctx, next){
+        try {
+            const { userId } = ctx.params;
+            const { offset, size } = ctx.query;
+            const [result] = await service.userLikeMomentList([userId, offset, size]);
+            ctx.body = result;
+        } catch (error) {
+            console.log(error)
+        }
+
+    }
+    async userPrivacyList(ctx, next){
+        console.log(ctx.user)
+        const { id } = ctx.user;
+        const { offset, size } = ctx.query   
+        const [result] = await service.userListOfClassify(id, offset, size, 'isPrivate');
         ctx.body = result;
     }
     // 修改动态
@@ -60,10 +78,23 @@ class momentController {
     }
     // 给动态添加标签
     async addLable (ctx, next){
-        const { lables } = ctx.request.body;
-        const { momentId } = ctx.params;
-        const result = await service.addLable(momentId, lables);
-        ctx.body = result
+        const lables = JSON.parse(ctx.req.body.lables);
+        const files = ctx.req.files;
+
+        console.log(lables.length, lables)
+        
+        if(lables.length > 0) {
+            const momentId = ctx.momentId;
+            const result = await service.addLable(momentId, lables);
+        }
+        if (files && JSON.stringify(files) !== '[]'){
+            await next()
+        }else {
+            ctx.body = { 
+                data: "动态发文本表成功~",
+                momentId: ctx.momentId
+            }
+        }
     }
     // 获取某条动态配图
     async pictureInfo (ctx, next){
@@ -72,7 +103,6 @@ class momentController {
             const newFilename = `${filename.split('.')[0]}-${pictureSize}.${filename.split('.')[1]}`;
             const [pictureInfo] = await fileService.getPictureByMomentId(filename)
             if (!pictureInfo) {
-                console.log(pictureInfo)
                 const error = new Error('图片不存在')
                 return ctx.app.emit('error', error, ctx)
             }

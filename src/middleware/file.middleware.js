@@ -33,11 +33,11 @@ const avatarHandler = avatarUpload.single('avatar')
 let pictureStorage = Multer.diskStorage({
   destination: async (req, file, cb) => {
       const userId = getUserId()
-      const picturePaht = path.resolve(PICTURE_PATH,userId)
-      if(!fs.existsSync(picturePaht)){
-        fs.mkdir(picturePaht, err => console.log(err));
+      const picturePath = path.resolve(PICTURE_PATH,userId)
+      if(!fs.existsSync(picturePath)){
+        fs.mkdir(picturePath, err => console.log(err));
       }
-      cb(null, picturePaht)
+      cb(null, picturePath)
   }
 })
 const pictureUpload = Multer({storage:pictureStorage})
@@ -46,9 +46,10 @@ const pictureHandler = pictureUpload.array('picture', 9)
 
 const imageResize = async (ctx, next) => {
   try {
-    const files = ctx.req?.files;
+    const files = ctx.req?.files || [ctx.req?.file];
     files?.forEach(file => {
       if (!file) return;
+      console.log('图片剪切s');
       const suffix = file.mimetype.split('/')[1]
       Jimp.read(file.path).then(image => {
         // image.resize(1280, Jimp.AUTO).write(`${file.path}-large.${suffix}`)

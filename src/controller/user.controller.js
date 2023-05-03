@@ -17,10 +17,18 @@ class  userController {
     }
     // 获取用户头像信息
     async avatarInfo(ctx, next) {
-        const { userId } = ctx.params;
-        const [avatarInfo] = await fileService.getAvatarByUserId(userId)
-        ctx.response.set('content-type', avatarInfo.mimetype)
-        ctx.body = fs.createReadStream(path.resolve(AVATAR_PATH, userId, avatarInfo.avatar_path))
+        try {
+            const { userId } = ctx.params;
+            const { avatarSize } = ctx.params;
+            const [userInfo] = await userService.getUserInfo(userId)
+            const { avatarName, mimetype } = userInfo
+            const newFilename = `${avatarName.split('.')[0]}-${avatarSize}.${avatarName.split('.')[1]}`;
+            ctx.response.set('content-type', mimetype)
+            ctx.body = fs.createReadStream(path.resolve(AVATAR_PATH, userId, newFilename))
+        } catch (error) {
+            console.log(error)
+        }
+        
     }
     async userInfo(ctx, next) {
         const [str] = Object.keys(ctx.request.body)
@@ -32,7 +40,11 @@ class  userController {
         } catch (error) {
             console.log(error)
         }
-
+    }
+    async getUserInfo(ctx, next) {
+        const { userId } = ctx.params;
+        const [result] = await userService.getUserInfo(userId);
+        ctx.body = result
     }
 }
 

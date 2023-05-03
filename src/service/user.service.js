@@ -1,4 +1,4 @@
-const connection = require('../app/database')
+const connection = require('../app/database');
 const passwordHandle = require('../units/password-handle')
 
 class UserService {
@@ -16,7 +16,7 @@ class UserService {
     // 根据用户名获取用户信息
     async getUserByName (str, strValue) {
         try {
-            const statement = `SELECT u.id AS 'id', u.username AS 'username', u.password AS 'password', a.avatar_path AS 'avatar'
+            const statement = `SELECT u.id AS 'id', u.username AS 'username', u.password AS 'password', a.avatar_path AS 'avatar', a.mimetype AS mimetype
                                FROM users u 
                                LEFT JOIN avatar a ON u.avatar_id = a.id 
                                WHERE u.${str} = ?`;
@@ -25,6 +25,16 @@ class UserService {
         } catch (error) {
             console.log(error)
         }
+    }
+    async getUserInfo(userId) {
+        const statement = `
+            SELECT u.id AS id, u.username AS username, a.avatar_path AS avatarName, u.bio, u.ip_address AS ipAddress
+            FROM users u 
+            LEFT JOIN avatar a ON a.id = u.avatar_id
+            WHERE u.id = ?
+        `
+        const result = await connection.execute(statement, [userId]);
+        return result[0]
     }
 }
 
