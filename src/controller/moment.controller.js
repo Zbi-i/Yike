@@ -9,7 +9,6 @@ class momentController {
         try {
             const { id } = ctx.user;
             const { content = '' } = ctx.req.body;
-            console.log('content', content)
             const result = await service.create(id, content);
             ctx.momentId = result.insertId
             // 添加标签
@@ -40,7 +39,7 @@ class momentController {
         try {
             const { userId } = ctx.params;
             const { offset, size } = ctx.query;
-            const [result] = await service.userLikeMomentList([userId, offset, size]);
+            const [result] = await service.userLikeMomentList(userId, offset, size);
             ctx.body = result;
         } catch (error) {
             console.log(error)
@@ -111,6 +110,18 @@ class momentController {
         } catch (error) {
             console.log(error)
         }
+    }
+    // 获取多条时刻
+    async yikeList(ctx, next){
+        const { offset, size } = ctx.query   
+        const [result] = await service.yikeList(offset, size)
+        ctx.body = result;
+    }
+    // 获取某一条时刻
+    async yikeDetail (ctx, next){
+        const momentId = ctx.params.momentId;
+        const result = await service.yikeDetail(momentId);
+        ctx.body = result;
     }
 }
 

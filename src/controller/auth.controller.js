@@ -23,7 +23,12 @@ class authController {
         return user;
     }
     async success (ctx, next) {
-        ctx.body = `用户${ctx.user.username}授权成功~！`
+        const { id, username } = ctx.user;
+        ctx.body = {
+            id,
+            username,
+            message: `用户${ctx.user.username}授权成功~！`
+        }
     }
 }
 

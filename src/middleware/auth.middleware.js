@@ -12,7 +12,6 @@ const getUserId = () => {
 const verifyAuth = async (ctx, next) => {
     try {
         const { username, password } = ctx.request.body || {}; 
-        console.log(username, password)
         // 判断用户名和密码是否为空
         if(!username || !password){
             const error = new Error(errorType.USERNAME_OR_PASSWORD_IS_NOT_NULL);
@@ -72,7 +71,6 @@ const verifyPermission = async (ctx, next) => {
         const tableName = keyName.replace('Id', '');
         const { momentId } = ctx.params;
         const { id } =  ctx.user;
-        console.log(tableName, momentId, id)
         const result = await checkPermission(tableName, momentId, id)
         if(!result){
             const error = new Error(errorType.UNPERMISSION)

@@ -188,7 +188,35 @@ class momentService {
             WHERE m.user_id = ?
             ORDER BY m.createAt DESC
             limit ?, ?`
-        const result = await connection.execute(statement, userId, offset, size);
+        console.log(userId, offset, size)
+        const result = await connection.execute(statement, [userId, offset, size]);
+        return result;
+    }
+    // 获取一组时刻
+    async yikeList(offset, size) {
+        const statement = `
+            SELECT
+                m.id AS id,
+                m.content AS content,
+                u.id AS userId,
+                u.username AS username,
+                JSON_OBJECT(
+                        'id', p.id,
+                        'picturePath', p.picture_path,
+                        'mimetype', p.mimetype
+                ) AS picture,
+                a.avatar_path AS avatar,
+                COUNT(ml.moment_id) AS likeCount
+            FROM moment m
+            LEFT JOIN users u ON m.user_id = u.id
+            LEFT JOIN picture p ON p.user_id = u.id AND p.moment_id = m.id
+            LEFT JOIN avatar a ON u.avatar_id = a.id AND u.id = a.user_id
+            LEFT JOIN moment_like ml ON ml.moment_id = m.id
+            WHERE p.id IS NOT NULL
+            GROUP BY m.id
+            ORDER BY m.createAt DESC
+            limit ?, ?`
+        const result = await connection.execute(statement, [offset, size]);
         return result;
     }
     // 修改动态
@@ -200,7 +228,6 @@ class momentService {
         } catch (error) {
             console.log(error)
         }
-        
     }
     // 删除动态
     async remove(momentId){
